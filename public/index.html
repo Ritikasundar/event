@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html ng-app="eventApp">
+<head>
+    <title>Event Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular-route.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        table, th, td { border: 1px solid black; }
+        th, td { padding: 10px; text-align: left; }
+        .error { color: red; }
+    </style>
+</head>
+
+<body ng-controller="EventController">
+    <div class="container">
+        <h1>Event Management</h1>
+
+        <form ng-submit="addEvent()" name="eventForm" novalidate>
+            <h3>Add Event</h3>
+            <label>Name:</label>
+            <input type="text" ng-model="newEvent.name" required><br><br>
+
+            <label>Date:</label>
+            <input type="date" ng-model="newEvent.date" required><br><br>
+
+            <label>Location:</label>
+            <input type="text" ng-model="newEvent.location" required><br><br>
+
+            <label>Description:</label>
+            <textarea ng-model="newEvent.description" required></textarea><br><br>
+
+            <button type="submit" ng-disabled="eventForm.$invalid">Add Event</button>
+
+            <div class="error" ng-show="eventForm.$submitted || eventForm.$dirty">
+                <p ng-show="eventForm.name.$error.required">Name is required.</p>
+                <p ng-show="eventForm.date.$error.required">Date is required.</p>
+                <p ng-show="eventForm.location.$error.required">Location is required.</p>
+                <p ng-show="eventForm.description.$error.required">Description is required.</p>
+            </div>
+        </form>
+
+        <h3>Filter Events</h3>
+        <input type="text" ng-model="searchQuery" placeholder="Search by name or location">
+
+        <div ng-repeat="event in events | filter:searchQuery">
+            <h3>{{event.name | lowercase}}</h3>
+            <p>{{event.date | lowercase}}</p>
+            <p>{{event.location | lowercase}}</p>
+            <p>{{event.description | lowercase}}</p>
+        </div>
+    </div>
+
+    <script>
+        var app = angular.module('eventApp', []);
+
+        // Factory for handling event data
+        app.factory('EventFactory', ['$http', function($http) {
+            return {
+                addEvent: function(event) {
+                    return $http.post('/add-events', event);
+                },
+                getEvents: function() {
+                    return $http.get('/get-events');
+                }
+            };
+        }]);
+
+        // Main Controller for Event Management
+        app.controller('EventController', ['$scope', 'EventFactory', function($scope, EventFactory) {
+            // Initialize scope variables
+            $scope.newEvent = {};
+            $scope.events = [];
+            $scope.searchQuery = '';
+
+            // Fetch all events from the backend
+            $scope.getEvents = function() {
+                EventFactory.getEvents()
+                    .then(function(response) {
+                        $scope.events = response.data;
+                    }, function(error) {
+                        console.error('Error fetching events:', error);
+                    });
+            };
+
+            // Add a new event and refresh event list
+            $scope.addEvent = function() {
+                EventFactory.addEvent($scope.newEvent)
+                    .then(function(response) {
+                        console.log('Event added successfully');
+                        alert('Event added');
+                        $scope.newEvent = {};  // Reset form
+                        $scope.getEvents();     // Refresh event list
+                    }, function(error) {
+                        console.error('Error adding event:', error);
+                    });
+            };
+
+            // Initial load of events
+            $scope.getEvents();
+        }]);
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="coursesApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Courses in IT</title>
+  <!-- Include AngularJS and ngAnimate -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-animate.js"></script>
+  <!-- Include styles for animations -->
+  <style>
+    .course-view.ng-enter {
+      transition: 0.5s linear all;
+      opacity: 0;
+    }
+
+    .course-view.ng-enter-active {
+      opacity: 1;
+    }
+
+    .course-view.ng-leave {
+      transition: 0.5s linear all;
+      opacity: 1;
+    }
+
+    .course-view.ng-leave-active {
+      opacity: 0;
+    }
+
+    /* Additional styling for better visibility */
+    .course-container {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 300px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    ul li {
+      margin-bottom: 10px;
+    }
+
+    ul li a {
+      text-decoration: none;
+      color: #007bff;
+    }
+
+    ul li a:hover {
+      color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>Courses in IT</h1>
+    <ul>
+      <li><a href="#!/web">Web Technologies</a></li>
+      <li><a href="#!/DM">Data Mining</a></li>
+    </ul>
+    <div class="course-container">
+      <div class="course-view" ng-view></div>
+    </div>
+  </div>
+
+  <!-- AngularJS application script -->
+  <script type="text/ng-template" id="a.html">
+    <h2>Name of the Course: {{course.name}}</h2>
+    <p>Code: {{course.code}}</p>
+    <p>Semester: {{course.sem}}</p>
+    <p>Year: {{course.year}}</p>
+  </script>
+
+  <script>
+    // Define the AngularJS application with ngRoute and ngAnimate modules
+    var app = angular.module('coursesApp', ['ngRoute', 'ngAnimate']);
+
+    // Configure the routes for the application
+    app.config(function($routeProvider) {
+      $routeProvider
+        .when('/web', {
+          templateUrl: 'a.html',
+          controller: 'webCtrl'
+        })
+        .when('/DM', {
+          templateUrl: 'a.html',
+          controller: 'dmCtrl'
+        })
+        .otherwise({
+          redirectTo: '/web'
+        });
+    });
+
+    // Controller for the Web Technologies course
+    app.controller('webCtrl', function($scope) {
+      $scope.course = {
+        name: 'Web Technologies',
+        code: '18IT511',
+        sem: '5',
+        year: 'III year'
+      };
+    });
+
+    // Controller for the Data Mining course
+    app.controller('dmCtrl', function($scope) {
+      $scope.course = {
+        name: 'Data Mining',
+        code: '18IT530',
+        sem: '5',
+        year: 'III Year'
+      };
+    });
+  </script>
+</body>
+</html>
