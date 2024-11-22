@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html ng-app="animationApp">
+<head>
+    <title>Simple Animation in AngularJS</title>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-csp.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-animate.js"></script>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: coral;
+            margin: 20px auto;
+            opacity: 1;
+            transition: all 0.5s ease-in-out;
+        }
+        .box.ng-hide {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+    </style>
+</head>
+<body ng-controller="AnimationController">
+    <button ng-click="toggleBox()">Toggle Box</button>
+    <div class="box" ng-show="showBox"></div>
+
+    <script>
+        // AngularJS application and controller
+        angular.module('animationApp', ['ngAnimate'])
+            .controller('AnimationController', function($scope) {
+                $scope.showBox = true;
+
+                $scope.toggleBox = function() {
+                    $scope.showBox = !$scope.showBox;
+                };
+            });
+    </script>
+</body>
+</html>
